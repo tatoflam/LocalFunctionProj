@@ -9,9 +9,10 @@ from openai.openai_object import OpenAIObject
 
 
 def set_key():
-    opeaiapikey = os.environ[openai_api_key_name]
-    openai.api_key = opeaiapikey 
-
+    opeai_api_key = os.environ[openai_api_key_name]
+    openai.api_key = opeai_api_key
+    openai.api_type = 'openai'
+    
 def get_clock():
     hm=get_utc_hm()
     response = openai.ChatCompletion.create(
@@ -72,7 +73,7 @@ def parse_openai_object(response):
         api_tokens_counted = response["usage"]["total_tokens"]
         usages.append(response["usage"])
         for i, choice in enumerate(response["choices"]):
-            logging.info(f"--- choice: {i} ---")
+            logging.debug(f"--- choice: {i} ---")
             
             finish_reason = choice["finish_reason"]
             contents += choice["message"]["content"]
