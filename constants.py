@@ -1,4 +1,5 @@
 import os
+import logging
 
 # base_dir = os.path.dirname(__file__)
 # gpt_model = "gpt-4"
@@ -8,4 +9,4 @@ azure_openai_key_name = "AZUREOPENAIKEY"
 azure_base_name = 'AZUREBASE'
 azure_deployment_name = 'AZUREDEPLOYMENTNAME'
 azure_openai_api_version = '2023-05-15' # this may change in the future
-
+log_level = logging.DEBUG
