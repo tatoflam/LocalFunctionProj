@@ -37,16 +37,14 @@ class ChatContext:
         language = prompt.get("language")
         
         content = "".join(message)
-        languages = ",".join(language)
-
         if(re.search("\\{now\\}", content)):
             # content = re.sub("\\{now\\}", self.time.strftime('%Y%m%dT%H%M%SZ'), content, 1)
-            content = re.sub("\\{now\\}", datetime.now().strftime('%Y%m%dT%H%M%SZ'), content, 1)
-        if languages:
+            content = re.sub("\\{now\\}", datetime.now().strftime('%H:%M:%SZ'), content, 1)
+        if language:
+            languages = ",".join(language)
             content = re.sub("\\{lang\\}", languages, content, 1)
         if name:
             self.messages.append({"role":role, "content":content, "name":name })
-
         else:
             self.messages.append({"role":role, "content":content })
         if self.index:

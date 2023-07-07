@@ -39,8 +39,10 @@ class Main:
             self.context.appendMessage(prompt)
         logger.info(self.context.messages)
                
-    def query(self):
+    def query(self, keys):
         try:
+            if len(self.context.messages) == 0:
+                self.create_prompt(keys)
             (role, res, function_call) = self.context.generateResponse()
         except Exception as e:
             logger.error("Exception: restarting the chat", e)

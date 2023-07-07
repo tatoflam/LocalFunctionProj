@@ -29,8 +29,7 @@ def clock(req: func.HttpRequest) -> func.HttpResponse:
     logger.info("Starting to clock query Open AI... ")
     start_time = time.time()
     
-    main.create_prompt(["esekansai","clock"])
-    (role, res, function_call)  = main.query()
+    (role, res, function_call)  = main.query(["esekansai","clock"])
     
     #response = get_clock()
     #content, api_tokens_counted, usages = parse_openai_object(response)
