@@ -1,0 +1,8 @@
+{
+    "role": "user",
+    "content": [
+        "Tell me my fortune at the current time in 140 characters only in LANG: {lang}. ",
+        "If LANG:'ja', 関西弁で答えといてや."
+    ],
+    "language": ["ja"]
+}

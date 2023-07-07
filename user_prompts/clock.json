@@ -1,0 +1,8 @@
+{
+  "role": "user",
+  "content": [
+    "Notify UTC TIME {now} and say something funny and interesting in 140 characters only in LANG: {lang}.",
+    "If LANG:'ja', end all the Japanese sentences with 'だぴょん'."
+  ],
+  "language": ["ja"]
+}

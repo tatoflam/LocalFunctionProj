@@ -6,9 +6,9 @@ from prompt import comedian_system_content, clock_user_content, \
     fortune_user_content, summary_system_content, continue_content, \
     chat_user_content
 from util import get_utc_hm
-import logging
+from logging import getLogger
 
-logging.basicConfig(level=log_level)
+logger = getLogger(__name__)
 
 deployment_name=os.environ[azure_deployment_name]
 
@@ -27,12 +27,16 @@ def get_clock():
             "content": clock_user_content.format(hm=hm, lang='ja')
         }
     ]
-    logging.debug(f"Ask: {messages}")
+    decoded = messages
+    #decoded = [{k: v.encode('utf-8').decode('utf-8')
+    #            for k,v in m.items()} for m in messages]
+    logger.debug(f"Ask: {decoded}")
     response = openai.ChatCompletion.create(
         engine=deployment_name, 
         # model=gpt_model,
         messages=messages
     )
+    logger.debug(response)
     
     return response
 
@@ -43,7 +47,7 @@ def get_fortune():
             "content": fortune_user_content.format(lang='ja')
         }
     ]
-    logging.debug(f"Ask: {messages}")
+    logger.debug(f"Ask: {messages}")
     response = openai.ChatCompletion.create(
         engine=deployment_name, 
         # model=gpt_model,
@@ -58,7 +62,7 @@ def chat(message):
             "content": chat_user_content.format(lang='ja', message=message)
         }
     ]
-    logging.debug(f"Ask: {messages}")
+    logger.debug(f"Ask: {messages}")
     response = openai.ChatCompletion.create(
         engine=deployment_name, 
         # model=gpt_model,

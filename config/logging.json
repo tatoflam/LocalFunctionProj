@@ -1,0 +1,37 @@
+{
+    "version": 1,
+    "disable_existing_loggers": false,
+    "root": {
+      "level": "DEBUG",
+      "handlers": [
+        "consoleHandler"
+      ]
+    },
+    "servant": {
+      "level": "DEBUG",
+      "handlers": [
+        "consoleHandler"
+      ],
+      "propagate": false
+    },
+    "openai": {
+      "level": "DEBUG",
+      "handlers": [
+        "consoleHandler"
+      ],
+      "propagate": false
+  },
+    "handlers": {
+      "consoleHandler": {
+        "class": "logging.StreamHandler",
+        "level": "DEBUG",
+        "formatter": "consoleFormatter",
+        "stream": "ext://sys.stdout"
+      }
+    },
+    "formatters": {
+      "consoleFormatter": {
+        "format": "%(thread)d %(levelname)s %(name)s %(funcName)s %(lineno)d %(message)s"
+      }
+    }
+}
