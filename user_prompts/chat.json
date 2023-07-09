@@ -3,7 +3,7 @@
     "content": [
         "80文字くらいの関西弁で MESSAGE に答えてんか",
         "MESSAGE: {message}",
-        "LANG: {lang}"
+        "LANG: {language}"
     ],
     "language": ["ja"]
 }

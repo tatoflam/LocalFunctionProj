@@ -6,9 +6,10 @@ import time
 # from api import set_key, get_clock, get_fortune, parse_openai_object
 from constants import logging_conf
 from azure_api import set_key, get_clock, get_fortune, chat
-from api import parse_openai_object
+from _api import parse_openai_object
 from chat_config import ChatConfig
-from main import Main
+from prompt_template import PromptTemplate
+from api import Api
 
 # logging.basicConfig(level=log_level)
 config_dict = None
@@ -20,7 +21,9 @@ logger = getLogger(__name__)
 
 app = func.FunctionApp()
 config = ChatConfig()
-main = Main(config, ["./system_prompts","./user_prompts"])
+promptTemplate = PromptTemplate(config, ["./system_prompts","./user_prompts"])
+
+#main = Main(config, ["./system_prompts","./user_prompts"])
 # set_key()
 
 @app.function_name(name="clock")
@@ -29,7 +32,10 @@ def clock(req: func.HttpRequest) -> func.HttpResponse:
     logger.info("Starting to clock query Open AI... ")
     start_time = time.time()
     
-    (role, res, function_call)  = main.query(["esekansai","clock"])
+    api = Api(promptTemplate, ["esekansai","clock"])
+    (role, res, function_call) = api.generateResponse()
+    
+    # (role, res, function_call)  = main.query(["esekansai","clock"])
     
     #response = get_clock()
     #content, api_tokens_counted, usages = parse_openai_object(response)
@@ -47,17 +53,19 @@ def clock(req: func.HttpRequest) -> func.HttpResponse:
 def fortune(req: func.HttpRequest) -> func.HttpResponse:
     logger.info("Starting to fortune query Open AI... ")
     logger.info("*** main ***")
-    logger.info(main.prompts)
     start_time = time.time()
-    
-    response = get_fortune()
-    content, api_tokens_counted, usages = parse_openai_object(response)
+
+    api = Api(promptTemplate, ["fortune"])
+    (role, res, function_call) = api.generateResponse()
+        
+    #response = get_fortune()
+    #content, api_tokens_counted, usages = parse_openai_object(response)
     # content = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
 
     time_spent = time.time() - start_time
     logger.info(f"Complete fortune query in {time_spent:.2f}")
     
-    return func.HttpResponse(f"{content}!")
+    return func.HttpResponse(f"{res}!")
 
 @app.function_name(name="chat")
 @app.route(route="chat")
