@@ -11,7 +11,7 @@ from util import convert_message
 
 logger = getLogger(__name__)
 class Api:
-    def __init__(self, p: PromptTemplate, keys: list):
+    def __init__(self, p: PromptTemplate, keys: list, params: dict = None):
         self.messages = []
         model = None
         temperature = None
@@ -25,7 +25,8 @@ class Api:
                 break
         for key in keys:   
             msg = p.messages.get(key)
-            msg = convert_message(msg)
+            if params:
+                msg = convert_message(msg, params)
             self.messages.append(msg)
         logger.debug(type(self.messages))
         logger.debug(self.messages)

@@ -2,13 +2,16 @@ import re
 import pytz
 from datetime import datetime
 
-def convert_message(message) -> str:
+def convert_message(message: dict, params: dict = None) -> dict:
     ret = {}
-    for k,v in message.items():        
-        if(re.search("\\{now\\}", v)):
-            v = re.sub("\\{now\\}", get_utc_hm(), v, 1)
-        ret[k]=v
-    return ret
+    if params:
+        for msg_key, msg_val in message.items():
+            for param_key, param_val in params.items():       
+                param = "\\{"+param_key+"\\}" 
+                if(re.search(param, msg_val)):
+                    msg_val = re.sub(param, param_val, msg_val, 1)
+                ret[msg_key]=msg_val
+    return ret or message
 
 def get_utc_hm():
 

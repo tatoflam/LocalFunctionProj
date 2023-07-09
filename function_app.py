@@ -10,6 +10,7 @@ from _api import parse_openai_object
 from chat_config import ChatConfig
 from prompt_template import PromptTemplate
 from api import Api
+from util import get_utc_hm
 
 # logging.basicConfig(level=log_level)
 config_dict = None
@@ -32,7 +33,8 @@ def clock(req: func.HttpRequest) -> func.HttpResponse:
     logger.info("Starting to clock query Open AI... ")
     start_time = time.time()
     
-    api = Api(promptTemplate, ["esekansai","clock"])
+    params = {"now": get_utc_hm()}
+    api = Api(promptTemplate, ["esekansai","clock"], params)
     (role, res, function_call) = api.generateResponse()
     
     # (role, res, function_call)  = main.query(["esekansai","clock"])
@@ -84,14 +86,18 @@ def fortune(req: func.HttpRequest) -> func.HttpResponse:
             message = req_body.get('msg')
         if not message: 
             message = "ボケてんか"
+    
+    params = {"message": message}
+    api = Api(promptTemplate, ["esekansai","chat"], params)    
+    (role, res, function_call) = api.generateResponse()
             
-    response = chat(message)
+    # response = chat(message)
     # content, api_tokens_counted, usages = parse_openai_object(response)
-    content = response['choices'][0]['message']["content"].replace('\n', '').replace(' .', '.').strip()
+    # content = response['choices'][0]['message']["content"].replace('\n', '').replace(' .', '.').strip()
     # content = response['choices'][0]['message']
 
     time_spent = time.time() - start_time
     logger.info(f"Complete chat query in {time_spent:.2f}")
     
-    return func.HttpResponse(f"{content}!")
+    return func.HttpResponse(f"{res}!")
 
