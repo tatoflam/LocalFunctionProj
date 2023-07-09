@@ -5,7 +5,7 @@ TODO:
 - ~~Functions brush up~~
 - Async/await
 - Request parameter
-- Logging and Monitoring configuration
+- ~~Logging~~ and Monitoring configuration
 - Use Key Vault
 - Authentication (OAuth?)
 - Memorization, LangChain utilization
