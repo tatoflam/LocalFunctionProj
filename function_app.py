@@ -2,11 +2,7 @@ import azure.functions as func
 import json
 from logging import getLogger, config
 import time
-# from read_secrets import main
-# from api import set_key, get_clock, get_fortune, parse_openai_object
 from constants import logging_conf
-from azure_api import set_key, get_clock, get_fortune, chat
-from _api import parse_openai_object
 from chat_config import ChatConfig
 from prompt_template import PromptTemplate
 from api import Api
@@ -24,40 +20,30 @@ app = func.FunctionApp()
 config = ChatConfig()
 promptTemplate = PromptTemplate(config, ["./system_prompts","./user_prompts"])
 
-#main = Main(config, ["./system_prompts","./user_prompts"])
-# set_key()
-
 @app.function_name(name="clock")
 @app.route(route="clock")
 def clock(req: func.HttpRequest) -> func.HttpResponse:
     logger.info("Starting to clock query Open AI... ")
     start_time = time.time()
     
-    params = {"now": get_utc_hm()}
+    params = {"utc_hm": get_utc_hm(), "lang": "ja"}
     api = Api(promptTemplate, ["esekansai","clock"], params)
     (role, res, function_call) = api.generateResponse()
     
-    # (role, res, function_call)  = main.query(["esekansai","clock"])
-    
-    #response = get_clock()
-    #content, api_tokens_counted, usages = parse_openai_object(response)
-    # content = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
-
     time_spent = time.time() - start_time
     logger.info(f"Complete clock query in {time_spent:.2f}")
     
     # return func.HttpResponse(f"{content}!")
     return func.HttpResponse(f"{res}!")
 
-
 @app.function_name(name="fortune")
 @app.route(route="fortune")
 def fortune(req: func.HttpRequest) -> func.HttpResponse:
     logger.info("Starting to fortune query Open AI... ")
-    logger.info("*** main ***")
     start_time = time.time()
+    params = {"lang": "ja"}
 
-    api = Api(promptTemplate, ["fortune"])
+    api = Api(promptTemplate, ["fortune"], params)
     (role, res, function_call) = api.generateResponse()
         
     #response = get_fortune()
@@ -75,19 +61,19 @@ def fortune(req: func.HttpRequest) -> func.HttpResponse:
     logger.info("Starting to chat query Open AI... ")
     start_time = time.time()
     
-    message = req.params.get('msg')
-    if not message:
+    query = req.params.get('q')
+    if not query:
         try:
             # If no parameter in the request, get from body
             req_body = req.get_json()
         except ValueError:
             pass
         else:
-            message = req_body.get('msg')
-        if not message: 
-            message = "ボケてんか"
+            query = req_body.get('q')
+        if not query: 
+            query = "ボケてんか"
     
-    params = {"message": message}
+    params = {"q": query}
     api = Api(promptTemplate, ["esekansai","chat"], params)    
     (role, res, function_call) = api.generateResponse()
             

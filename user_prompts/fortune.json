@@ -1,10 +1,8 @@
 {
     "role": "user",
     "content": [
-        "Tell me my fortune at the current time in 140 characters only in LANG: {language}.",
+        "Tell me my fortune at the current time in 140 characters only in LANG: {lang}.",
         "If LANG:'ja', 関西弁で答えといてや."
     ],
-    "model" : "gpt-turbo-3.5",
-    "temperature" : 0.9,
-    "language": ["ja"]
+    "temperature" : 0.9
 }

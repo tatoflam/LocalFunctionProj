@@ -2,13 +2,11 @@ import os
 import openai
 import pinecone
 
-from constants import gpt_model, openai_api_key_name, azure_openai_key_name, \
-    azure_base_name, azure_deployment_name, azure_openai_api_version, log_level
+from constants import azure_openai_key_name, azure_base_name, azure_deployment_name, \
+    azure_openai_api_version
 
 class ChatConfig:
     def __init__(self):
-        #self.OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-        #assert self.OPENAI_API_KEY, "OPENAI_API_KEY environment variable is missing"
 
         self.API_KEY = os.environ[azure_openai_key_name]
         assert self.API_KEY, "AZURE_OPENAI_API_KEY environment variable is missing"

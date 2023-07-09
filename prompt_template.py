@@ -3,13 +3,6 @@ import json
 import re
 from logging import config, getLogger
 from chat_config import ChatConfig
-from chat_context import ChatContext
-from constants import logging_conf
-
-#logging.basicConfig(level=log_level)
-#logger = logging.getLogger(__name__)
-#sh = logging.StreamHandler()
-#logger.addHandler(sh)
 
 logger = getLogger(__name__)
 
@@ -24,8 +17,6 @@ class PromptTemplate:
         self.create_prompt_templates()
         
     def load_manifests(self, pathManifests: list):
-        logger.info("*******TEST*******")
-
         for path in pathManifests:
             files = os.listdir(path)
             for file in files:
@@ -51,9 +42,7 @@ class PromptTemplate:
         language = manifest.get("language")
         
         content = " ".join(content)
-        #if(re.search("\\{now\\}", content)):
-            # content = re.sub("\\{now\\}", self.time.strftime('%Y%m%dT%H%M%SZ'), content, 1)
-        #    content = re.sub("\\{now\\}", datetime.now().strftime('%H:%M:%SZ'), content, 1)
+
         if language:
             languages = ",".join(language)
             content = re.sub("\\{lang\\}", languages, content, 1)
@@ -70,15 +59,3 @@ class PromptTemplate:
         #    }
     def build_functions(self, key: str, manifest: dict):
         pass
-    
-               
-    def query(self, keys):
-        try:
-            if len(self.context.messages) == 0:
-                self.create_prompt(keys)
-            (role, res, function_call) = self.context.generateResponse()
-        except Exception as e:
-            logger.error("Exception: restarting the chat", e)
-            self.context.clearMessages()
-        finally:
-            return (role, res, function_call) 

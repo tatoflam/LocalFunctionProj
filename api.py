@@ -6,7 +6,7 @@ from termcolor import colored
 from chat_config import ChatConfig
 from prompt_template import PromptTemplate
 from constants import gpt_model, default_temperature
-from prompt import comedian_system_content, clock_user_content
+from archive._prompt import comedian_system_content, clock_user_content
 from util import convert_message
 
 logger = getLogger(__name__)
@@ -51,7 +51,7 @@ class Api:
         
         if self.functions:
             response = openai.ChatCompletion.create(
-                model=self.model,
+                # model=self.model,
                 engine=self.engine,
                 messages=self.messages,
                 functions=self.functions,
@@ -65,7 +65,7 @@ class Api:
         logger.debug(colored(f"model={response['model']}", "yellow"))
         logger.debug(colored(f"usage={response['usage']}", "yellow"))
         answer = response['choices'][0]['message']
-        res = answer['content']
+        res = answer['content'].replace('\n', '').replace(' .', '.').strip()
         role = answer['role']
         function_call = answer.get('function_call')
         return (role, res, function_call)
