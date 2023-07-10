@@ -3,7 +3,6 @@ import tiktoken
 from logging import getLogger
 from aiohttp import ClientSession
 
-from chat_config import ChatConfig
 from prompt_template import PromptTemplate
 from constants import gpt_model, default_temperature
 from util import convert_message
@@ -24,11 +23,12 @@ class Api:
             temperature = p.manifests.get(key).get("temperature")
             if temperature:
                 break
-        for key in keys:   
+        for key in keys:
             msg = p.messages.get(key)
             if params:
                 msg = convert_message(msg, params)
             self.messages.append(msg)
+        
         logger.debug(type(self.messages))
         logger.debug(self.messages)
                 
@@ -49,7 +49,7 @@ class Api:
         role = None
         res = None
         function_call = None
-        
+                
         async with ClientSession(trust_env=True) as session:
             openai.aiosession.set(session)
         

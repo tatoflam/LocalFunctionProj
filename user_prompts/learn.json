@@ -1,0 +1,14 @@
+{
+    "role": "user",
+    "content": [
+        "質問 について{year}歳にわかるように、GUIDELINE が存在するならその観点を踏まえて、おもしろい例を挙げ、叱咤激励し、ジョークを交えながら教えてください",
+        "質問: {q}",
+        "GUIDELINE: {guideline}",
+        "LANG: {lang}"
+    ],
+    "lang": ["ja"],
+    "model": "gpt-3.5-turbo",
+    "embeddings": {
+        "index_name": "mext-g1to6-index"
+    }
+}

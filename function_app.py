@@ -1,12 +1,12 @@
 import azure.functions as func
 import json
 from logging import getLogger, config
-from constants import logging_conf
+from constants import logging_conf, default_year, mext_guideline_index_name
 from chat_config import ChatConfig
 from prompt_template import PromptTemplate
 from api import Api
-from util import get_utc_hm
-from WrapperFunction import app as fastapi_app
+from util import get_utc_hm, get_req_value
+# from WrapperFunction import app as fastapi_app
 
 config_dict = None
 with open(logging_conf, 'r', encoding='utf-8') as f:
@@ -15,11 +15,10 @@ with open(logging_conf, 'r', encoding='utf-8') as f:
 config.dictConfig(config_dict)
 logger = getLogger(__name__)
 
-from WrapperFunction import app as fastapi_app
-
-app = func.AsgiFunctionApp(app=fastapi_app, http_auth_level=func.AuthLevel.ANONYMOUS)
+# app = func.AsgiFunctionApp(app=fastapi_app, http_auth_level=func.AuthLevel.ANONYMOUS)
+app = func.FunctionApp()
 config = ChatConfig()
-promptTemplate = PromptTemplate(config, ["./system_prompts","./user_prompts"])
+promptTemplate = PromptTemplate(config, ["./persona_prompts","./user_prompts"])
 
 @app.function_name(name="clock")
 @app.route(route="clock")
@@ -50,21 +49,27 @@ async def fortune(req: func.HttpRequest) -> func.HttpResponse:
 async def chat(req: func.HttpRequest) -> func.HttpResponse:
     logger.info("Starting to chat query Open AI... ")
     
-    query = req.params.get('q')
-    if not query:
-        try:
-            # If no parameter in the request, get from body
-            req_body = req.get_json()
-        except ValueError:
-            pass
-        else:
-            query = req_body.get('q')
-        if not query: 
-            query = "ボケてんか"
+    q = get_req_value(req, 'q', "ボケてんか")
     
-    params = {"q": query}
+    params = {"q": q}
     api = Api(promptTemplate, ["esekansai","chat"], params)    
     (role, res, function_call) = await api.generateResponse()
 
     logger.info(f"Complete chat query.")
+    return func.HttpResponse(f"{res}!")
+
+@app.function_name(name="learn")
+@app.route(route="learn")
+async def learn(req: func.HttpRequest) -> func.HttpResponse:
+    logger.info("Starting to learn query Open AI... ")
+    
+    q = get_req_value(req, 'q', "なんか教えて")
+    year = get_req_value(req, 'year', default_year)
+    guideline = promptTemplate.embeddings[mext_guideline_index_name].fetch_similar_docs(q)
+    
+    params = {"q": q, "year": year, "guideline": guideline}
+    api = Api(promptTemplate, ["gokuu","learn"], params)    
+    (role, res, function_call) = await api.generateResponse()
+
+    logger.info(f"Complete learn query.")
     return func.HttpResponse(f"{res}!")

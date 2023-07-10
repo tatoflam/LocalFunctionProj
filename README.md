@@ -9,7 +9,7 @@ TODO:
 - Worker threading
 - Use Key Vault
 - Authentication (OAuth?)
-- Memorization, LangChain utilization
-- Embedding and use Pinecone
+- Memorization
+- ~~Embedding and use Pinecone~~
 - Use Cosmos DB
 - Messaging with other functions
