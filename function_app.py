@@ -1,13 +1,12 @@
 import azure.functions as func
 import json
 from logging import getLogger, config
-import time
 from constants import logging_conf
 from chat_config import ChatConfig
 from prompt_template import PromptTemplate
 from api import Api
 from util import get_utc_hm
-import asyncio
+from WrapperFunction import app as fastapi_app
 
 config_dict = None
 with open(logging_conf, 'r', encoding='utf-8') as f:
@@ -16,7 +15,9 @@ with open(logging_conf, 'r', encoding='utf-8') as f:
 config.dictConfig(config_dict)
 logger = getLogger(__name__)
 
-app = func.FunctionApp()
+from WrapperFunction import app as fastapi_app
+
+app = func.AsgiFunctionApp(app=fastapi_app, http_auth_level=func.AuthLevel.ANONYMOUS)
 config = ChatConfig()
 promptTemplate = PromptTemplate(config, ["./system_prompts","./user_prompts"])
 
@@ -36,7 +37,6 @@ async def clock(req: func.HttpRequest) -> func.HttpResponse:
 @app.route(route="fortune")
 async def fortune(req: func.HttpRequest) -> func.HttpResponse:
     logger.info("Starting to fortune query Open AI... ")
-    # params = {"lang": "ja"}
 
     api = Api(promptTemplate, ["fortune"])
     (role, res, function_call) = await api.generateResponse()
@@ -67,6 +67,4 @@ async def chat(req: func.HttpRequest) -> func.HttpResponse:
     (role, res, function_call) = await api.generateResponse()
 
     logger.info(f"Complete chat query.")
-    
     return func.HttpResponse(f"{res}!")
-
