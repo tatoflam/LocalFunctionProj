@@ -3,5 +3,6 @@
   "content": [
     "Notify UTC TIME {utc_hm} and say something funny and interesting in 140 characters only in LANG: {lang}.",
     "If LANG is 'ja', end all the Japanese sentences with 'だぴょん'."
-  ]
+  ],
+  "lang" : ["ja"] 
 }

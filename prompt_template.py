@@ -1,7 +1,7 @@
 import os
 import json
 import re
-from logging import config, getLogger
+from logging import getLogger
 from chat_config import ChatConfig
 
 logger = getLogger(__name__)
@@ -39,13 +39,15 @@ class PromptTemplate:
         # model = manifest.get("model")
         # temperature = manifest.get("temperature")
         name = manifest.get("name")
-        language = manifest.get("language")
+        language = manifest.get("lang")
         
         content = " ".join(content)
 
         if language:
             languages = ",".join(language)
             content = re.sub("\\{lang\\}", languages, content, 1)
+            logger.debug(content)
+
         if name:
             self.messages[key] ={"role":role, "content":content, "name":name }
         else:

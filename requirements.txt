@@ -8,5 +8,4 @@ azure-keyvault-secrets
 openai
 pytz
 pinecone-client
-termcolor
 tiktoken

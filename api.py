@@ -1,12 +1,11 @@
 import openai
 import tiktoken
 from logging import getLogger
-from termcolor import colored
+from aiohttp import ClientSession
 
 from chat_config import ChatConfig
 from prompt_template import PromptTemplate
 from constants import gpt_model, default_temperature
-from archive._prompt import comedian_system_content, clock_user_content
 from util import convert_message
 
 logger = getLogger(__name__)
@@ -15,6 +14,8 @@ class Api:
         self.messages = []
         model = None
         temperature = None
+        
+        # For Azure Open AI, model is specified by engine(deployment name)
         for key in keys:
             model = p.manifests.get(key).get("model")
             if model:
@@ -44,28 +45,38 @@ class Api:
     def messages_tokens(self) -> int:
         return sum([self.num_tokens(message["content"]) for message in self.messages])
 
-    def generateResponse(self):
+    async def generateResponse(self):
         role = None
         res = None
         function_call = None
         
-        if self.functions:
-            response = openai.ChatCompletion.create(
-                # model=self.model,
-                engine=self.engine,
-                messages=self.messages,
-                functions=self.functions,
-                temperature=self.temperature)
-        else:
-            response = openai.ChatCompletion.create(
-                # model=self.model,
-                engine=self.engine,
-                messages=self.messages,
-                temperature=self.temperature)
-        logger.debug(colored(f"model={response['model']}", "yellow"))
-        logger.debug(colored(f"usage={response['usage']}", "yellow"))
+        async with ClientSession(trust_env=True) as session:
+            openai.aiosession.set(session)
+        
+            if self.functions:
+                response = await openai.ChatCompletion.acreate(
+                    # model=self.model,
+                    engine=self.engine,
+                    messages=self.messages,
+                    functions=self.functions,
+                    temperature=self.temperature)
+            else:                
+                response = await openai.ChatCompletion.acreate(
+                    # model=self.model,
+                    # deployment_id=self.model,
+                    engine=self.engine,
+                    messages=self.messages,
+                    temperature=self.temperature)
+                logger.debug(response)
+        await openai.aiosession.get().close()
+        
         answer = response['choices'][0]['message']
         res = answer['content'].replace('\n', '').replace(' .', '.').strip()
         role = answer['role']
         function_call = answer.get('function_call')
+        logger.debug(f"model={response['model']}")
+        logger.debug(f"role={role}")
+        logger.debug(f"res={res}")
+        logger.debug(f"usage={response['usage']}")
+
         return (role, res, function_call)

@@ -4,5 +4,6 @@
         "Tell me my fortune at the current time in 140 characters only in LANG: {lang}.",
         "If LANG:'ja', 関西弁で答えといてや."
     ],
+    "lang" : ["ja","ko","en"],
     "temperature" : 0.9
 }

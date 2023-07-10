@@ -4,5 +4,6 @@
         "80文字くらいの関西弁で QUERY に答えてんか",
         "QUERY: {q}",
         "LANG: ja"
-    ]
+    ],
+    "model": "gpt-3.5-turbo"
 }
