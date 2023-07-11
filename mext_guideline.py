@@ -12,14 +12,14 @@ class MextGuideline:
         self.index = pinecone.Index(index_name)
         self.config = config
     
-    def fetch_similar_docs(self, query: str, k=1, score=False) -> list:
+    def fetch_similar_docs(self, query: str, k=1) -> list:
         query_embeddings_response = openai.Embedding.create(
             input = query,
             engine = self.config.EMBEDDING_DEPLOYMENT_NAME
         )
         query_embedding = query_embeddings_response['data'][0]['embedding']
         
-        results = self.index.query(query_embedding, top_k=1, include_metadata=True)
+        results = self.index.query(query_embedding, top_k=k, include_metadata=True)
         logger.debug(results)
         
         string = results["matches"][0]["metadata"]["text"]

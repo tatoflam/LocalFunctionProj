@@ -36,6 +36,7 @@ class PromptTemplate:
             # prompt = self.prompts.get(key)
             self.build_message(key, manifest)
             self.build_embeddings(manifest)
+            self.load_functions(key, manifest)
         logger.info(self.messages)
     
     def build_message(self, key: str, manifest: dict):
@@ -75,6 +76,11 @@ class PromptTemplate:
             index_name = embeddings.get("index_name")
             if index_name == mext_guideline_index_name:
                 self.embeddings[index_name] = MextGuideline(index_name, self.config)
-            
+    
+    def load_functions(self, key: str, manifest: dict):
+        functions = manifest.get("functions")
+        if functions:
+            with open(f"{functions}", 'r') as f:
+                self.functions[key] = json.load(f)
     def build_functions(self, key: str, manifest: dict):
         pass

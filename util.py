@@ -26,7 +26,7 @@ def get_utc_hm():
 
     return hm
 
-def get_req_value(req: func.HttpRequest, param: str, default_val: str) -> str:
+def get_req_value(req: func.HttpRequest, param: str, default_val: str = "") -> str:
     val = req.params.get(param)
     if not val:
         try:
