@@ -59,7 +59,9 @@ async def call_learn(req: func.HttpRequest) -> tuple:
     prompts = ["gokuu","learn"]
     q = get_req_value(req, 'q', "なんか教えて")
     year = get_req_value(req, 'year', default_year)
-    guideline = promptTemplate.embeddings[mext_guideline_index_name].fetch_similar_docs(q)
+    guideline = promptTemplate.embeddings[mext_guideline_index_name].fetch_similar_docs(
+        query=q, k=8)
+    guideline = guideline.replace('\n', '').replace(' .', '.').strip()
     params = {"q": q, "year": year, "guideline": guideline}
     api = Api(promptTemplate, prompts, params)    
     (role, res, function_call) = await api.generateResponse()

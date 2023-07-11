@@ -20,8 +20,7 @@ class MextGuideline:
         query_embedding = query_embeddings_response['data'][0]['embedding']
         
         results = self.index.query(query_embedding, top_k=k, include_metadata=True)
-        logger.debug(results)
         
-        string = results["matches"][0]["metadata"]["text"]
+        string = "\n".join([results["matches"][i]["metadata"]["text"] for i in range(k)])
         logger.debug(string)
         return string
