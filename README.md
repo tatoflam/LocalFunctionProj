@@ -12,4 +12,4 @@ TODO:
 - Memorization
 - ~~Embedding and use Pinecone~~
 - Use Cosmos DB
-- Messaging with other functions
+- ~~Filter string and call the other functions~~

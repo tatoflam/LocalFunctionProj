@@ -56,7 +56,7 @@ async def call_chat(req: func.HttpRequest) -> tuple:
 async def call_learn(req: func.HttpRequest) -> tuple:
     logger.info("Starting to learn query Open AI... ")
 
-    prompts = ["gokuu","learn"]
+    prompts = ["queen","learn"]
     q = get_req_value(req, 'q', "なんか教えて")
     year = get_req_value(req, 'year', default_year)
     guideline = promptTemplate.embeddings[mext_guideline_index_name].fetch_similar_docs(
@@ -91,6 +91,7 @@ async def talk(req: func.HttpRequest) -> func.HttpResponse:
 @app.function_name(name="clock")
 @app.route(route="clock")
 async def clock(req: func.HttpRequest) -> func.HttpResponse:
+    (role, res, function_call) = await call_clock()    
     return func.HttpResponse(f"{res}!")
 
 @app.function_name(name="fortune")
